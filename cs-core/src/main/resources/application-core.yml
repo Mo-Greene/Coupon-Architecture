@@ -1,0 +1,25 @@
+spring:
+  config:
+    activate:
+      on-profile: core
+  datasource:
+    hikari:
+      jdbc-url: jdbc:mysql://localhost:3306/cs?useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: mo-greene
+      password: 1234
+      maximum-pool-size: 10
+      max-lifetime: 30000
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
