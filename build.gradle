@@ -46,7 +46,8 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
         //lombok
-        annotationProcessor 'org.projectlombok:lombok'
+        implementation 'org.projectlombok:lombok:1.18.24'
+        annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
         //db
         runtimeOnly 'com.h2database:h2'
