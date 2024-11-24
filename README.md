@@ -37,3 +37,17 @@ spring:
 요청량이 최대 커넥션 풀의 수를 넘게 되었을 때와(maximum-pool-size: 10)  
 연결을 기다리지 못하고 초과 되었을 때 (connection-timeout: 30000)  
 MySQL이 요청을 견디지 못하고 실패가 올라가는 걸로 확인됨
+
+<br>
+
+---
+
+## Redis 사용시
+
+![스크린샷 2024-11-24 181534](https://github.com/user-attachments/assets/d1a799ca-a8d9-4c9e-9154-79df0b713511)
+![redis-성능](https://github.com/user-attachments/assets/95f574ff-4b33-4ca4-bd26-1b3537e53175)
+
+### Redis queue 흐름도
+
+![coupon-architect drawio](https://github.com/user-attachments/assets/279d7b9c-992e-467e-8396-6ddf7a2b099d)
+

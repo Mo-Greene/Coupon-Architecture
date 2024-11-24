@@ -5,33 +5,29 @@ import com.mo.cscore.model.Coupon;
 import com.mo.cscore.model.CouponIssue;
 import com.mo.cscore.repository.jpa.CouponIssueJpaRepository;
 import com.mo.cscore.repository.jpa.CouponIssueRepository;
-import com.mo.cscore.repository.jpa.CouponJpaRepository;
+import com.mo.cscore.repository.redis.RedisRepository;
+import com.mo.cscore.repository.redis.dto.CouponRedisEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.mo.cscore.exception.ErrorCode.DUPLICATE_COUPON;
-import static com.mo.cscore.exception.ErrorCode.NOT_EXIST_COUPON;
 
 @Service
 @RequiredArgsConstructor
 public class CouponIssueService {
 
-	private final CouponJpaRepository couponJpaRepository;
 	private final CouponIssueJpaRepository couponIssueJpaRepository;
 	private final CouponIssueRepository couponIssueRepository;
+	private final CouponCacheService couponCacheService;
+	private final RedisRepository redisRepository;
+
 
 	@Transactional
 	public void issueCoupon(long couponId, long userId) {
-		Coupon coupon = findCoupon(couponId);
-		coupon.issue();
-		createCouponIssue(userId, coupon);
-	}
-
-	@Transactional(readOnly = true)
-	public Coupon findCoupon(long couponId) {
-		return couponJpaRepository.findById(couponId)
-			.orElseThrow(() -> new CouponException(NOT_EXIST_COUPON, NOT_EXIST_COUPON.message));
+		CouponRedisEntity coupon = couponCacheService.getCouponCache(couponId);
+		coupon.checkIssuableCoupon();
+		issueRequest(couponId, userId, coupon.totalQuantity());
 	}
 
 	@Transactional
@@ -48,6 +44,14 @@ public class CouponIssueService {
 		CouponIssue issuedCoupon = couponIssueRepository.findFirstCouponIssue(couponId, userId);
 		if (issuedCoupon != null) {
 			throw new CouponException(DUPLICATE_COUPON, DUPLICATE_COUPON.message);
+		}
+	}
+
+	private void issueRequest(long couponId, long userId, Integer totalIssueQuantity) {
+		if (totalIssueQuantity == null) {
+			redisRepository.issueRequest(couponId, userId, Integer.MAX_VALUE);
+		} else {
+			redisRepository.issueRequest(couponId, userId, totalIssueQuantity);
 		}
 	}
 }
